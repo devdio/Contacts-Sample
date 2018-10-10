@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import ContactInfo from "./contact-info.js";
 import ContactDetails from "./contact-details.js";
+import ContactCreate from "./contact-create.js";
+import update from "immutability-helper";
 
 class Contact extends Component {
   constructor(props) {
@@ -28,6 +30,33 @@ class Contact extends Component {
       selectedKey: key
     });
     console.log(key);
+  };
+
+  handleCreate = contact => {
+    this.setState({
+      contactData: update(this.state.contactData, { $push: [contact] })
+    });
+  };
+
+  handleRemove = () => {
+    if (this.state.selectedKey === -1) return;
+    this.setState({
+      contactData: update(this.state.contactData, {
+        $splice: [[this.state.selectedKey, 1]]
+      }),
+      selectedKey: -1
+    });
+  };
+
+  handleEdit = (name, phone) => {
+    this.setState({
+      contactData: update(this.state.contactData, {
+        [this.state.selectedKey]: {
+          name: { $set: name },
+          phone: { $set: phone }
+        }
+      })
+    });
   };
 
   render() {
@@ -59,7 +88,10 @@ class Contact extends Component {
         <ContactDetails
           isSelected={this.state.selectedKey !== -1}
           contact={this.state.contactData[this.state.selectedKey]}
+          onRemove={this.handleRemove}
+          onEdit={this.handleEdit}
         />
+        <ContactCreate onCreate={this.handleCreate} />
       </div>
     );
   }
