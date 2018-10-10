@@ -19,6 +19,24 @@ class Contact extends Component {
     };
   }
 
+  componentWillMount() {
+    const contactData = localStorage.contactData;
+    if (contactData) {
+      this.setState({
+        contactData: JSON.parse(contactData)
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      JSON.stringigy(prevState.contactData) !==
+      JSON.stringify(this.state.contactData)
+    ) {
+      localStorage.contact = JSON.stringify(this.state.contactData);
+    }
+  }
+
   handleChange = event => {
     this.setState({
       keyword: event.target.value
